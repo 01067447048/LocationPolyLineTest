@@ -22,12 +22,18 @@ class MainViewModel @Inject constructor(
     private val tracker: LocationRepository
 ): ViewModel(){
 
+    // 지속적으로 받아오는 위치 정보를 List로 관리.
     private val _location = ListLiveData<Location>()
     val location: LiveData<ArrayList<Location>> get() = _location
 
+    // Location 을 Polyline을 그리기 위해 LatLng 로 바꿔 관리.
     private val _latLng = ListLiveData<LatLng>()
     val latLng: LiveData<ArrayList<LatLng>> get() = _latLng
 
+    //위치 정보를 받는 interval
+    private val interval = 1500L
+
+    //Test 용도
     private var count = 0
 
     fun getLocation() {
@@ -35,10 +41,11 @@ class MainViewModel @Inject constructor(
             while(true) {
                 tracker.getCurrentLocation()?.let { location ->
                     withContext(Dispatchers.Main) {
+                        // UI에 관한 코드 이므로 Main 에서 돌린다.
                         _location.add(location)
                     }
                 }
-                delay(1500L)
+                delay(interval)
             }
         }
     }

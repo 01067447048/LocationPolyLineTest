@@ -46,6 +46,7 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_COARSE_LOCATION
         ))
 
+        // google map 을 코루틴을 활용하여 비동기로 선언.
         lifecycleScope.launchWhenCreated {
             val mapFragment: SupportMapFragment? =
                 supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                 setMaxZoomPreference(20f)
             }
 
+            // map 이 불러와진 후에 실행 되어야 할 코드이므로 여기에 위치해야 함.
             model.location.observe(this@MainActivity) { locations ->
                 if (locations.isNotEmpty()){
                     LatLng(locations.last().latitude, locations.last().longitude).also {
@@ -63,16 +65,18 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            
+
         }
 
         lifecycleScope.launchWhenStarted {
             model.latLng.observe(this@MainActivity) { latlngs ->
                 if (latlngs.size > 0) {
+                    // polyline 에 대해 선언 할 코드.
                     mMap.addPolyline {
                         addAll(latlngs)
                         color(Color.RED)
                     }
+                    // marker 에 대해 선언 할 코드.
                     mMap.addMarker {
                         position(latlngs.last())
                     }
